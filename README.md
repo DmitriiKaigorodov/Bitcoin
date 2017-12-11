@@ -12,7 +12,7 @@ Where:
  * **%CredentialsInBase64%** - credentials for RPC access to bitcoind encoded in base64 in next format: **%username%:%password%**
  * **%YourUrl%** - URL for your bitcoin daemon
  
- Ofcourse, you need curl for it. You need download it [here](https://curl.haxx.se/dlwiz/)
+ Ofcourse, you need curl for it. You can download it [here](https://curl.haxx.se/dlwiz/)
  
  ## EndPoints Description
  

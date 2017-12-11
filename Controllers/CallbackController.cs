@@ -47,15 +47,16 @@ namespace Bitcoin.Controllers
                 {
                    await walletService.UpdateWalletBalance();
                 }
-                
+
                 await unitOfWork.SaveChanges();
                 existentTransaction = transactionService.FindInDatabase(txid);
                 return Ok(existentTransaction.TxId);
             }
-            catch (ConcurrencyException)
+            catch(RpcErrorException ex)
             {
-                return BadRequest("Trying to access the transaction which is modifying...");
+                return BadRequest(ex.Error);
             }
+
 
         }
 
@@ -64,6 +65,7 @@ namespace Bitcoin.Controllers
         [Route("/api/blocknotify/{blockHash}")]
         public async Task<IActionResult> BlockNotified(string blockHash)
         {
+    
             try
             {
                 var updatedTransactions = await transactionService.GetRecentTransactions(blockHash);
@@ -83,13 +85,12 @@ namespace Bitcoin.Controllers
                 }
 
                 await unitOfWork.SaveChanges();
+                return Ok();
             }
-            catch (ConcurrencyException)
+            catch(RpcErrorException ex)
             {
-                return BadRequest("Trying to access the transaction which is modifying...");
+                return BadRequest(ex.Error);
             }
-
-            return Ok();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bitcoin.Core;
+using Bitcoin.Core.Exceptions;
 using Bitcoin.Core.Extentions;
 using Bitcoin.Core.Models;
 using Bitcoin.Core.Models.ApiResources;
@@ -27,12 +28,19 @@ namespace Bitcoin.Controllers
         [Route("/api/getlast")]
         public async Task<IActionResult> GetLastTransactions()
         {
-            var transactionsDetails = await transactionService.FindLastTransactions();
-            var result = mapper.Map<IEnumerable<TransactionDetails>, IEnumerable<LastIncomingModel>>(transactionsDetails);
-            transactionsDetails.Select(td => td.Transaction).MarkAsRequested();
-            await unitOfWork.SaveChanges();
+            try
+            {
+                var transactionsDetails = await transactionService.FindLastTransactions();
+                var result = mapper.Map<IEnumerable<TransactionDetails>, IEnumerable<LastIncomingModel>>(transactionsDetails);
+                transactionsDetails.Select(td => td.Transaction).MarkAsRequested();
+                await unitOfWork.SaveChanges();
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch(RpcErrorException ex)
+            {
+                return BadRequest(ex.Error);
+            }
         }
     }
 }

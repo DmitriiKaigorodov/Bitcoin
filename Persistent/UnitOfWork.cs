@@ -16,15 +16,30 @@ namespace Bitcoin.Persistent
         }
         public async Task SaveChanges()
         {
-            try
+            bool saveFailed; 
+            do
             {
-                await dbContext.SaveChangesAsync();
-            }
-            catch(DbUpdateConcurrencyException ex)
-            {
-                var conflictedObject = ex.Entries.Single().Entity;
-                throw new ConcurrencyException(conflictedObject);
-            }
+                saveFailed = false;
+                try
+                {
+                    await dbContext.SaveChangesAsync();
+                }
+                catch(DbUpdateConcurrencyException ex)
+                {
+                    saveFailed = true;
+                    var entries = ex.Entries;
+
+                    foreach(var entry in entries)
+                    {
+                        var entity = entry.Entity;
+
+                        if(entity == null)
+                            continue;
+
+                        entry.Reload();
+                    }
+                }
+            }while(saveFailed);
            
         }
     }

@@ -1,6 +1,6 @@
 # Bitcoin
 ## Configure Application Settings
-In **appsettings.json** find section with name **BitcoinDaemon** and specify your bitcoind URL, username and password in appropriate    fields.
+In **appsettings.json** find section with name **BitcoinDaemon** and specify your bitcoind URL, username and password in appropriate    fields. Also you have to specify connection string to your database in **ConnectionStrings** section.
 
 ## Configure bitcoind
 Open your **bitcoin.conf** and add or change next settings:
